@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TakeOFF Driver Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F3EE;
+    --ink:#16213E;
+    --amber:#E8A33D;
+    --slate:#6B7280;
+    --moss:#3F7D58;
+    --rust:#B54834;
+    --card:#FFFFFF;
+    --line:#E4E1D8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.disp{font-family:'Space Grotesk',system-ui,sans-serif;}
+  .tab{font-variant-numeric:tabular-nums;letter-spacing:0.08em;}
+  #app{min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+  .shell{width:100%;max-width:460px;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;position:relative;}
+  .admin-shell{max-width:900px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 8px;}
+  .brand{display:flex;align-items:center;gap:8px;}
+  .brand-mark{width:26px;height:26px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;}
+  .brand-mark svg{width:14px;height:14px;}
+  .brand-name{font-weight:600;font-size:15px;letter-spacing:-0.01em;}
+  .content{flex:1;padding:8px 20px 100px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px;}
+  h1.page-title{font-size:24px;line-height:1.25;margin:14px 0 6px;font-weight:600;}
+  p.sub{color:var(--slate);font-size:14.5px;line-height:1.5;margin:0 0 22px;}
+  label{display:block;font-size:13px;font-weight:500;color:var(--ink);margin-bottom:6px;}
+  .field{margin-bottom:16px;}
+  .hint{font-size:12px;color:var(--slate);margin-top:5px;}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);}
+  .otp-row{display:flex;gap:8px;}
+  .otp-row input{text-align:center;font-size:22px;font-weight:600;padding:12px 0;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 18px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .08s ease;}
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:disabled{background:#C7CBD6;cursor:not-allowed;}
+  .btn-amber{background:var(--amber);color:var(--ink);}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+  .btn-link{background:none;border:none;color:var(--ink);text-decoration:underline;font-size:13.5px;cursor:pointer;padding:6px 0;font-family:inherit;}
+  .bottom-bar{position:sticky;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(245,243,238,0),var(--bg) 30%);padding:18px 20px 22px;display:flex;gap:10px;}
+  .progress-wrap{padding:0 20px;margin-top:4px;}
+  .progress-track{height:5px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .3s ease;}
+  .step-label{font-size:12px;color:var(--slate);margin-top:8px;display:flex;justify-content:space-between;}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;}
+  .badge-pending{background:#FCEFD9;color:#93650D;}
+  .badge-approved{background:#E1F0E6;color:var(--moss);}
+  .badge-rejected{background:#F6E3DF;color:var(--rust);}
+  .doc-row{display:flex;align-items:center;justify-content:space-between;border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+  .doc-row.filled{border-style:solid;border-color:var(--moss);}
+  .doc-meta{font-size:13px;}
+  .doc-meta b{display:block;font-size:14px;margin-bottom:2px;}
+  .file-btn{font-size:12.5px;font-weight:600;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;}
+  .summary-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;gap:14px;}
+  .summary-row:last-child{border-bottom:none;}
+  .summary-row .k{color:var(--slate);}
+  .summary-row .v{text-align:right;font-weight:500;max-width:60%;}
+  .section-title{font-size:12px;text-transform:none;color:var(--slate);font-weight:600;margin:18px 0 6px;}
+  .section-title:first-child{margin-top:0;}
+  .thumb-row{display:flex;gap:8px;margin-top:8px;}
+  .thumb-row img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);}
+  .center-icon{width:64px;height:64px;border-radius:50%;background:var(--moss);display:flex;align-items:center;justify-content:center;margin:18px auto 6px;}
+  .toast{background:#FCEFD9;border:1px solid #EFCB8B;border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:16px;line-height:1.5;}
+  .toast b{font-family:'Space Grotesk',sans-serif;}
+  .link-row{text-align:center;margin-top:18px;}
+  .app-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .app-table th{text-align:left;color:var(--slate);font-weight:500;padding:8px 10px;border-bottom:1.5px solid var(--line);font-size:12px;}
+  .app-table td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .app-table tr:hover{background:#FAF9F5;cursor:pointer;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .err{color:var(--rust);font-size:12.5px;margin-top:5px;}
+  .stepper-dots{display:flex;gap:6px;margin-bottom:14px;}
+  .stepper-dots span{height:4px;flex:1;border-radius:3px;background:var(--line);}
+  .stepper-dots span.active{background:var(--ink);}
+  .stepper-dots span.done{background:var(--amber);}
+  .modal-back{position:fixed;inset:0;background:rgba(22,33,62,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20;}
+  .modal{background:#fff;width:100%;max-width:460px;border-radius:18px 18px 0 0;max-height:88vh;overflow-y:auto;padding:22px 20px 26px;}
+  .close-x{position:absolute;top:16px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--slate);}
+  textarea{min-height:70px;resize:vertical;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAajQU6TxGkr7Y_ioAs5Ck4_4-fxZ67mHo",
+  authDomain: "takeoff-onboarding.firebaseapp.com",
+  projectId: "takeoff-onboarding",
+  storageBucket: "takeoff-onboarding.firebasestorage.app",
+  messagingSenderId: "290037814032",
+  appId: "1:290037814032:web:e59bd9e7851a3ccccc0b95"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+const APP_NS = 'takeoff-onboarding-v1';
+const state = {
+  screen: 'signin',
+  phone: '',
+  phoneError: '',
+  otpInput: '',
+  otpError: '',
+  devOtp: '',
+  otpExpiresAt: 0,
+  step: 1,
+  totalSteps: 5,
+  form: {
+    name:'', dob:'', gender:'', idNumber:'', email:'', address:'', city:'',
+    emergencyName:'', emergencyPhone:'',
+    idType:'National ID', idFrontImage:null, idFrontName:'', selfieImage:null, selfieName:'',
+    vehicleType:'Motorbike', make:'', model:'', year:'', color:'', plate:'', capacity:'',
+    docs:{ license:null, licenseName:'', logbook:null, logbookName:'', insurance:null, insuranceName:'', addressProof:null, addressProofName:'' }
+  },
+  refNumber:'',
+  existingApp: null,
+  adminUnlocked: false,
+  adminApps: [],
+  adminSelected: null,
+  loading: false,
+};
+
+function $(sel){ return document.querySelector(sel); }
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Firestore-backed storage. Keys look like "application:0771234567" or "otp:0771234567" —
+// we split on the first colon to get a collection name and a document id.
+function splitKey(key){
+  const i = key.indexOf(':');
+  return { coll: key.slice(0,i) + 's', id: key.slice(i+1) };
+}
+async function sset(key, val){
+  try{ const {coll,id} = splitKey(key); await setDoc(doc(db, coll, id), val); return true; }
+  catch(e){ console.error('sset failed', e); alert('Could not save to the database: ' + e.message); return null; }
+}
+async function sget(key){
+  try{ const {coll,id} = splitKey(key); const snap = await getDoc(doc(db, coll, id)); return snap.exists() ? snap.data() : null; }
+  catch(e){ console.error('sget failed', e); return null; }
+}
+async function slistApplications(){
+  try{ const snap = await getDocs(collection(db, 'applications')); const out = []; snap.forEach(d => out.push(d.data())); return out; }
+  catch(e){ console.error('list failed', e); return []; }
+}
+
+function normPhone(p){ return p.replace(/[^\d+]/g,''); }
+function genOtp(){ return String(Math.floor(100000 + Math.random()*900000)); }
+function genRef(){ return 'AU-' + Date.now().toString(36).toUpperCase(); }
+
+function fileToResizedBase64(file, maxDim=420, quality=0.45){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let {width, height} = img;
+        if (width > maxDim || height > maxDim){
+          if (width > height){ height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFilePick(input, onDone){
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const b64 = await fileToResizedBase64(file);
+    onDone(b64, file.name);
+  } catch(e){ alert('Could not read that file — try a different image.'); }
+}
+
+// ---------- Screens ----------
+
+function renderShell(inner, {admin=false} = {}){
+  $('#app').innerHTML = `<div class="shell ${admin?'admin-shell':''}">${inner}</div>`;
+}
+
+function topbar(right=''){
+  return `<div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h13M12 5l7 7-7 7" stroke="#E8A33D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="brand-name">TakeOFF · Driver</div>
+    </div>
+    ${right}
+  </div>`;
+}
+
+function renderSignIn(){
+  renderShell(`
+    ${topbar()}
+    <div class="content">
+      <h1 class="page-title">Drive with TakeOFF</h1>
+      <p class="sub">Enter your phone number to start a new courier driver application, or check the status of one you already submitted.</p>
+      <div class="card">
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" placeholder="e.g. 077 123 4567" value="${esc(state.phone)}">
+          ${state.phoneError ? `<div class="err">${esc(state.phoneError)}</div>` : ''}
+        </div>
+        <button class="btn btn-primary" id="continueBtn">Continue</button>
+      </div>
+      <p class="hint" style="text-align:center;">Test data only — no real ID or document details.</p>
+      <div class="link-row"><button class="btn-link" id="adminLink">Reviewer / admin view</button></div>
+    </div>
+  `);
+  $('#phone').addEventListener('input', e => state.phone = e.target.value);
+  $('#continueBtn').addEventListener('click', onSignInContinue);
+  $('#adminLink').addEventListener('click', () => { state.screen='adminGate'; render(); });
+}
+
+async function onSignInContinue(){
+  const phone = normPhone(state.phone);
+  if (phone.length < 9){ state.phoneError = 'Enter a valid phone number.'; render(); return; }
+  state.phoneError = '';
+  state.phone = phone;
+  state.loading = true; render();
+  const existing = await sget('application:' + phone);
+  state.loading = false;
+  if (existing && existing.status){
+    state.existingApp = existing;
+    state.screen = 'status';
+    render();
+    return;
+  }
+  // send OTP
+  const code = genOtp();
+  const expiresAt = Date.now() + 5*60*1000;
+  await sset('otp:' + phone, { code, expiresAt, attempts:0 });
+  state.devOtp = code;
+  state.otpExpiresAt = expiresAt;
+  state.otpInput = '';
+  state.otpError = '';
+  state.screen = 'otp';
+  render();
+}
+
+function renderOtp(){
+  const secsLeft = Math.max(0, Math.round((state.otpExpiresAt - Date.now())/1000));
+  renderShell(`
+    ${topbar()}
+    <div class="content">
+      <h1 class="page-title">Verify your number</h1>
+      <p class="sub">We sent a 6-digit code by SMS to <b>${esc(state.phone)}</b>.</p>
+      <div class="toast"><b>Demo mode:</b> this environment has no live SMS gateway, so the code is shown here instead of being sent by text. Your code is <b class="tab">${esc(state.devOtp)}</b>. The verification, expiry and resend logic below all run for real against stored data.</div>
+      <div class="card">
+        <div class="field">
+          <label for="otp">6-digit code</label>
+          <input type="text" id="otp" inputmode="numeric" maxlength="6" class="tab" placeholder="••••••" value="${esc(state.otpInput)}">
+          ${state.otpError ? `<div class="err">${esc(state.otpError)}</div>` : ''}
+        </div>
+        <button class="btn btn-primary" id="verifyBtn">Verify code</button>
+        <div class="link-row"><button class="btn-link" id="resendBtn">Resend code</button></div>
+      </div>
+      <div class="link-row"><button class="btn-link" id="backBtn">Use a different number</button></div>
+    </div>
+  `);
+  $('#otp').addEventListener('input', e => state.otpInput = e.target.value.replace(/\D/g,''));
+  $('#verifyBtn').addEventListener('click', onVerifyOtp);
+  $('#resendBtn').addEventListener('click', onResendOtp);
+  $('#backBtn').addEventListener('click', () => { state.screen='signin'; render(); });
+}
+
+async function onResendOtp(){
+  const code = genOtp();
+  const expiresAt = Date.now() + 5*60*1000;
+  await sset('otp:' + state.phone, { code, expiresAt, attempts:0 });
+  state.devOtp = code;
+  state.otpExpiresAt = expiresAt;
+  state.otpError = '';
+  render();
+}
+
+async function onVerifyOtp(){
+  const record = await sget('otp:' + state.phone);
+  if (!record){ state.otpError = 'No code found — request a new one.'; render(); return; }
+  if (Date.now() > record.expiresAt){ state.otpError = 'That code expired. Tap resend.'; render(); return; }
+  if (state.otpInput.length !== 6){ state.otpError = 'Enter the 6-digit code.'; render(); return; }
+  if (state.otpInput !== record.code){
+    record.attempts = (record.attempts||0) + 1;
+    await sset('otp:' + state.phone, record);
+    state.otpError = `Incorrect code (attempt ${record.attempts}/5).`;
+    render();
+    return;
+  }
+  // success
+  state.step = 1;
+  state.form.name = state.form.name || '';
+  state.screen = 'onboard';
+  render();
+}
+
+const STEP_TITLES = ['Personal & contact details','Identity verification','Vehicle details','Driver & vehicle documents','Review & submit'];
+
+function stepperDots(){
+  let dots = '';
+  for (let i=1;i<=state.totalSteps;i++){
+    const cls = i < state.step ? 'done' : (i === state.step ? 'active' : '');
+    dots += `<span class="${cls}"></span>`;
+  }
+  return `<div class="stepper-dots">${dots}</div>`;
+}
+
+function renderOnboard(){
+  let body = '';
+  if (state.step === 1) body = stepPersonal();
+  else if (state.step === 2) body = stepIdentity();
+  else if (state.step === 3) body = stepVehicle();
+  else if (state.step === 4) body = stepDocuments();
+  else if (state.step === 5) body = stepReview();
+
+  renderShell(`
+    ${topbar()}
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" style="width:${(state.step/state.totalSteps*100)}%"></div></div>
+      <div class="step-label"><span>Step ${state.step} of ${state.totalSteps}</span><span>${STEP_TITLES[state.step-1]}</span></div>
+    </div>
+    <div class="content">
+      ${stepperDots()}
+      <h1 class="page-title">${STEP_TITLES[state.step-1]}</h1>
+      ${body}
+    </div>
+    <div class="bottom-bar">
+      ${state.step>1 ? `<button class="btn btn-ghost" id="backStepBtn" style="width:auto;padding:14px 20px;">Back</button>` : ''}
+      <button class="btn btn-primary" id="nextStepBtn">${state.step===5 ? 'Submit application' : 'Continue'}</button>
+    </div>
+  `);
+  wireStepEvents();
+}
+
+function stepPersonal(){
+  const f = state.form;
+  return `
+  <div class="card">
+    <div class="field"><label>Full name</label><input type="text" id="f_name" value="${esc(f.name)}" placeholder="As on your ID"></div>
+    <div class="grid2">
+      <div class="field"><label>Date of birth</label><input type="date" id="f_dob" value="${esc(f.dob)}"></div>
+      <div class="field"><label>Gender</label>
+        <select id="f_gender">
+          <option ${f.gender==='' ?'selected':''} value="">Select</option>
+          <option ${f.gender==='Female'?'selected':''}>Female</option>
+          <option ${f.gender==='Male'?'selected':''}>Male</option>
+          <option ${f.gender==='Prefer not to say'?'selected':''}>Prefer not to say</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>National ID number</label><input type="text" id="f_idNumber" value="${esc(f.idNumber)}" placeholder="e.g. 63-123456A78"></div>
+    <div class="field"><label>Email address</label><input type="email" id="f_email" value="${esc(f.email)}" placeholder="you@example.com"></div>
+    <div class="field"><label>Physical address</label><input type="text" id="f_address" value="${esc(f.address)}" placeholder="Street, suburb"></div>
+    <div class="field"><label>City</label><input type="text" id="f_city" value="${esc(f.city)}" placeholder="e.g. Harare"></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Emergency contact</div>
+    <div class="field"><label>Contact name</label><input type="text" id="f_emergencyName" value="${esc(f.emergencyName)}"></div>
+    <div class="field"><label>Contact phone</label><input type="tel" id="f_emergencyPhone" value="${esc(f.emergencyPhone)}"></div>
+  </div>
+  `;
+}
+
+function stepIdentity(){
+  const f = state.form;
+  return `
+  <div class="card">
+    <div class="field"><label>ID type</label>
+      <select id="f_idType">
+        <option ${f.idType==='National ID'?'selected':''}>National ID</option>
+        <option ${f.idType==='Passport'?'selected':''}>Passport</option>
+        <option ${f.idType==='Driver\'s licence'?'selected':''}>Driver's licence</option>
+      </select>
+    </div>
+    <div class="section-title">Photo of ID (front)</div>
+    <div class="doc-row ${f.idFrontImage?'filled':''}">
+      <div class="doc-meta"><b>${f.idFrontImage ? f.idFrontName : 'No file selected'}</b>${f.idFrontImage?'Uploaded':'JPG or PNG, test image only'}</div>
+      <label class="file-btn">Choose file<input type="file" accept="image/*" id="f_idFront" style="display:none;"></label>
+    </div>
+    ${f.idFrontImage ? `<div class="thumb-row"><img src="${f.idFrontImage}"></div>` : ''}
+    <div class="section-title">Selfie holding your ID</div>
+    <div class="doc-row ${f.selfieImage?'filled':''}">
+      <div class="doc-meta"><b>${f.selfieImage ? f.selfieName : 'No file selected'}</b>${f.selfieImage?'Uploaded':'Used to match your face to your ID'}</div>
+      <label class="file-btn">Choose file<input type="file" accept="image/*" id="f_selfie" style="display:none;"></label>
+    </div>
+    ${f.selfieImage ? `<div class="thumb-row"><img src="${f.selfieImage}"></div>` : ''}
+  </div>
+  `;
+}
+
+function stepVehicle(){
+  const f = state.form;
+  return `
+  <div class="card">
+    <div class="field"><label>Vehicle type</label>
+      <select id="f_vehicleType">
+        <option ${f.vehicleType==='Motorbike'?'selected':''}>Motorbike</option>
+        <option ${f.vehicleType==='Sedan'?'selected':''}>Sedan</option>
+        <option ${f.vehicleType==='Van'?'selected':''}>Van</option>
+        <option ${f.vehicleType==='Pickup truck'?'selected':''}>Pickup truck</option>
+        <option ${f.vehicleType==='Bicycle'?'selected':''}>Bicycle</option>
+      </select>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Make</label><input type="text" id="f_make" value="${esc(f.make)}" placeholder="e.g. Honda"></div>
+      <div class="field"><label>Model</label><input type="text" id="f_model" value="${esc(f.model)}" placeholder="e.g. CG125"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Year</label><input type="number" id="f_year" value="${esc(f.year)}" placeholder="e.g. 2019"></div>
+      <div class="field"><label>Colour</label><input type="text" id="f_color" value="${esc(f.color)}"></div>
+    </div>
+    <div class="field"><label>Number plate</label><input type="text" id="f_plate" value="${esc(f.plate)}" placeholder="e.g. ADZ 1234"></div>
+    <div class="field"><label>Load capacity (kg, optional)</label><input type="number" id="f_capacity" value="${esc(f.capacity)}"></div>
+  </div>
+  `;
+}
+
+function docField(key, label, hint){
+  const f = state.form;
+  const val = f.docs[key], name = f.docs[key+'Name'];
+  return `
+  <div class="section-title">${label}</div>
+  <div class="doc-row ${val?'filled':''}">
+    <div class="doc-meta"><b>${val ? name : 'No file selected'}</b>${val?'Uploaded':hint}</div>
+    <label class="file-btn">Choose file<input type="file" accept="image/*,.pdf" id="doc_${key}" style="display:none;"></label>
+  </div>
+  ${val ? `<div class="thumb-row"><img src="${val}"></div>` : ''}
+  `;
+}
+
+function stepDocuments(){
+  return `
+  <div class="card">
+    ${docField('license', "Driver's licence", 'Front side, current and valid')}
+    ${docField('logbook', 'Vehicle registration book', 'Proof the vehicle is registered')}
+    ${docField('insurance', 'Proof of insurance', 'Current insurance certificate')}
+    ${docField('addressProof', 'Proof of address', 'Utility bill or similar, last 3 months')}
+  </div>
+  `;
+}
+
+function stepReview(){
+  const f = state.form;
+  const docsCount = Object.keys(f.docs).filter(k=>!k.endsWith('Name') && f.docs[k]).length;
+  return `
+  <div class="card">
+    <div class="section-title">Personal & contact</div>
+    <div class="summary-row"><span class="k">Name</span><span class="v">${esc(f.name)||'—'}</span></div>
+    <div class="summary-row"><span class="k">Date of birth</span><span class="v">${esc(f.dob)||'—'}</span></div>
+    <div class="summary-row"><span class="k">Email</span><span class="v">${esc(f.email)||'—'}</span></div>
+    <div class="summary-row"><span class="k">Address</span><span class="v">${esc(f.address)}, ${esc(f.city)}</span></div>
+    <div class="summary-row"><span class="k">Emergency contact</span><span class="v">${esc(f.emergencyName)||'—'}</span></div>
+
+    <div class="section-title">Identity</div>
+    <div class="summary-row"><span class="k">ID type</span><span class="v">${esc(f.idType)}</span></div>
+    <div class="summary-row"><span class="k">ID number</span><span class="v">${esc(f.idNumber)||'—'}</span></div>
+    <div class="summary-row"><span class="k">ID photo / selfie</span><span class="v">${f.idFrontImage&&f.selfieImage?'Both uploaded':'Incomplete'}</span></div>
+
+    <div class="section-title">Vehicle</div>
+    <div class="summary-row"><span class="k">Type</span><span class="v">${esc(f.vehicleType)}</span></div>
+    <div class="summary-row"><span class="k">Make / model</span><span class="v">${esc(f.make)} ${esc(f.model)}</span></div>
+    <div class="summary-row"><span class="k">Plate</span><span class="v">${esc(f.plate)||'—'}</span></div>
+
+    <div class="section-title">Documents</div>
+    <div class="summary-row"><span class="k">Uploaded</span><span class="v">${docsCount} of 4</span></div>
+  </div>
+  <div class="card">
+    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;">
+      <input type="checkbox" id="f_confirm" style="margin-top:3px;">
+      <span style="font-size:13.5px;color:var(--slate);">I confirm the details above are for testing this application only and not real personal or identity information.</span>
+    </label>
+  </div>
+  `;
+}
+
+function wireStepEvents(){
+  const f = state.form;
+  const bind = (id, key, transform) => { const el = $('#'+id); if (el) el.addEventListener('input', e => f[key] = transform ? transform(e.target.value) : e.target.value); };
+  const bindChange = (id, key) => { const el = $('#'+id); if (el) el.addEventListener('change', e => f[key] = e.target.value); };
+
+  if (state.step===1){
+    bind('f_name','name'); bindChange('f_dob','dob'); bindChange('f_gender','gender');
+    bind('f_idNumber','idNumber'); bind('f_email','email'); bind('f_address','address'); bind('f_city','city');
+    bind('f_emergencyName','emergencyName'); bind('f_emergencyPhone','emergencyPhone');
+  }
+  if (state.step===2){
+    bindChange('f_idType','idType');
+    const idFront = $('#f_idFront'); if(idFront) idFront.addEventListener('change', () => handleFilePick(idFront, (b64,name)=>{ f.idFrontImage=b64; f.idFrontName=name; render(); }));
+    const selfie = $('#f_selfie'); if(selfie) selfie.addEventListener('change', () => handleFilePick(selfie, (b64,name)=>{ f.selfieImage=b64; f.selfieName=name; render(); }));
+  }
+  if (state.step===3){
+    bindChange('f_vehicleType','vehicleType');
+    bind('f_make','make'); bind('f_model','model'); bind('f_year','year'); bind('f_color','color'); bind('f_plate','plate'); bind('f_capacity','capacity');
+  }
+  if (state.step===4){
+    ['license','logbook','insurance','addressProof'].forEach(key => {
+      const el = $('#doc_'+key);
+      if (el) el.addEventListener('change', () => handleFilePick(el, (b64,name)=>{ f.docs[key]=b64; f.docs[key+'Name']=name; render(); }));
+    });
+  }
+  if (state.step===5){
+    const cb = $('#f_confirm'); if (cb) cb.addEventListener('change', e => f._confirmed = e.target.checked);
+  }
+  const back = $('#backStepBtn'); if (back) back.addEventListener('click', () => { state.step--; render(); });
+  const next = $('#nextStepBtn'); next.addEventListener('click', onNextStep);
+}
+
+function onNextStep(){
+  const f = state.form;
+  if (state.step===1){
+    if (!f.name || !f.dob || !f.idNumber || !f.address){ alert('Please fill in name, date of birth, ID number and address.'); return; }
+  }
+  if (state.step===2){
+    if (!f.idFrontImage || !f.selfieImage){ alert('Please upload both your ID photo and selfie.'); return; }
+  }
+  if (state.step===3){
+    if (!f.make || !f.model || !f.plate){ alert('Please fill in make, model and number plate.'); return; }
+  }
+  if (state.step===4){
+    const d = f.docs;
+    if (!d.license || !d.logbook || !d.insurance || !d.addressProof){ alert('Please upload all four documents.'); return; }
+  }
+  if (state.step===5){
+    if (!f._confirmed){ alert('Please confirm the checkbox before submitting.'); return; }
+    submitApplication();
+    return;
+  }
+  state.step++;
+  render();
+}
+
+async function submitApplication(){
+  state.loading = true; render();
+  const ref = genRef();
+  const record = {
+    phone: state.phone,
+    ...state.form,
+    status: 'pending',
+    submittedAt: new Date().toISOString(),
+    refNumber: ref,
+  };
+  await sset('application:' + state.phone, record);
+  state.refNumber = ref;
+  state.existingApp = record;
+  state.loading = false;
+  state.screen = 'complete';
+  render();
+}
+
+function renderComplete(){
+  renderShell(`
+    ${topbar()}
+    <div class="content">
+      <div class="center-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h1 class="page-title" style="text-align:center;">Application submitted</h1>
+      <p class="sub" style="text-align:center;">Thanks, ${esc(state.form.name.split(' ')[0]||'driver')}. Your reference number is</p>
+      <div class="card" style="text-align:center;">
+        <div class="disp tab" style="font-size:22px;font-weight:700;letter-spacing:0.06em;">${esc(state.refNumber)}</div>
+      </div>
+      <p class="sub" style="text-align:center;">We'll review your details and documents and notify you at ${esc(state.phone)} once a decision has been made. You can check back anytime with your phone number.</p>
+      <button class="btn btn-ghost" id="homeBtn">Back to home</button>
+    </div>
+  `);
+  $('#homeBtn').addEventListener('click', () => { resetToSignIn(); });
+}
+
+function statusBadge(status){
+  const map = { pending:['badge-pending','Pending review'], approved:['badge-approved','Approved'], rejected:['badge-rejected','Not approved'] };
+  const [cls,label] = map[status] || map.pending;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function renderStatus(){
+  const a = state.existingApp;
+  renderShell(`
+    ${topbar()}
+    <div class="content">
+      <h1 class="page-title">Application status</h1>
+      <p class="sub">Reference ${esc(a.refNumber)} · submitted ${new Date(a.submittedAt).toLocaleDateString()}</p>
+      <div class="card">
+        <div style="margin-bottom:14px;">${statusBadge(a.status)}</div>
+        ${a.status==='pending' ? `<p class="sub" style="margin-bottom:0;">Our review team is checking your details and documents. We'll notify you at ${esc(a.phone)} once a decision is made.</p>` : ''}
+        ${a.status==='approved' ? `<p class="sub" style="margin-bottom:0;">You're approved to drive with TakeOFF. Welcome aboard.</p>` : ''}
+        ${a.status==='rejected' ? `<p class="sub" style="margin-bottom:0;">${a.reviewNote ? esc(a.reviewNote) : 'Your application was not approved this time.'}</p>` : ''}
+      </div>
+      <button class="btn btn-ghost" id="homeBtn">Back to home</button>
+    </div>
+  `);
+  $('#homeBtn').addEventListener('click', () => resetToSignIn());
+}
+
+function resetToSignIn(){
+  state.screen = 'signin';
+  state.phone = ''; state.otpInput=''; state.otpError=''; state.step=1;
+  state.form = { name:'', dob:'', gender:'', idNumber:'', email:'', address:'', city:'', emergencyName:'', emergencyPhone:'',
+    idType:'National ID', idFrontImage:null, idFrontName:'', selfieImage:null, selfieName:'',
+    vehicleType:'Motorbike', make:'', model:'', year:'', color:'', plate:'', capacity:'',
+    docs:{ license:null, licenseName:'', logbook:null, logbookName:'', insurance:null, insuranceName:'', addressProof:null, addressProofName:'' } };
+  render();
+}
+
+// ---------- Admin ----------
+
+function renderAdminGate(){
+  renderShell(`
+    ${topbar()}
+    <div class="content">
+      <h1 class="page-title">Reviewer sign-in</h1>
+      <p class="sub">Enter the reviewer passcode to see submitted applications.</p>
+      <div class="card">
+        <div class="field"><label>Passcode</label><input type="text" id="passcode" placeholder="Hint: AU-REVIEW"></div>
+        <button class="btn btn-primary" id="unlockBtn">Enter</button>
+      </div>
+      <div class="link-row"><button class="btn-link" id="backBtn">Back</button></div>
+    </div>
+  `);
+  $('#unlockBtn').addEventListener('click', async () => {
+    if ($('#passcode').value.trim() === 'AU-REVIEW'){ state.adminUnlocked = true; state.screen='admin'; await loadAdminApps(); render(); }
+    else alert('Incorrect passcode.');
+  });
+  $('#backBtn').addEventListener('click', () => { state.screen='signin'; render(); });
+}
+
+async function loadAdminApps(){
+  const apps = await slistApplications();
+  apps.sort((a,b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+  state.adminApps = apps;
+}
+
+function renderAdmin(){
+  const apps = state.adminApps;
+  renderShell(`
+    ${topbar(`<button class="btn-link" id="refreshBtn">Refresh</button>`)}
+    <div class="content">
+      <h1 class="page-title">Applications</h1>
+      <p class="sub">${apps.length} submitted · shared test data visible to anyone using this admin view.</p>
+      ${apps.length===0 ? `<div class="card">No applications yet. Submit one through the driver flow first.</div>` : `
+      <div class="card" style="padding:0;overflow-x:auto;">
+        <table class="app-table">
+          <thead><tr><th>Driver</th><th>Vehicle</th><th>Submitted</th><th>Status</th></tr></thead>
+          <tbody>
+            ${apps.map((a,i) => `<tr data-i="${i}">
+              <td><b>${esc(a.name)}</b><br><span style="color:var(--slate)">${esc(a.phone)}</span></td>
+              <td>${esc(a.vehicleType)}<br><span style="color:var(--slate)">${esc(a.plate)}</span></td>
+              <td>${new Date(a.submittedAt).toLocaleDateString()}</td>
+              <td>${statusBadge(a.status)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`}
+      <div class="link-row"><button class="btn-link" id="backBtn">Exit reviewer view</button></div>
+    </div>
+  `, {admin:true});
+  const refresh = $('#refreshBtn'); if(refresh) refresh.addEventListener('click', async () => { await loadAdminApps(); render(); });
+  document.querySelectorAll('.app-table tr[data-i]').forEach(row => {
+    row.addEventListener('click', () => { state.adminSelected = apps[+row.dataset.i]; render(); showAdminModal(); });
+  });
+  $('#backBtn').addEventListener('click', () => { state.screen='signin'; state.adminUnlocked=false; render(); });
+}
+
+function showAdminModal(){
+  const a = state.adminSelected;
+  if (!a) return;
+  const back = document.createElement('div');
+  back.className = 'modal-back';
+  back.innerHTML = `
+    <div class="modal" style="position:relative;">
+      <button class="close-x" id="closeModal">✕</button>
+      <h2 style="margin-top:0;">${esc(a.name)}</h2>
+      <div style="margin-bottom:14px;">${statusBadge(a.status)}</div>
+
+      <div class="section-title">Personal & contact</div>
+      <div class="summary-row"><span class="k">Phone</span><span class="v">${esc(a.phone)}</span></div>
+      <div class="summary-row"><span class="k">DOB</span><span class="v">${esc(a.dob)}</span></div>
+      <div class="summary-row"><span class="k">Email</span><span class="v">${esc(a.email)||'—'}</span></div>
+      <div class="summary-row"><span class="k">Address</span><span class="v">${esc(a.address)}, ${esc(a.city)}</span></div>
+      <div class="summary-row"><span class="k">Emergency contact</span><span class="v">${esc(a.emergencyName)} · ${esc(a.emergencyPhone)}</span></div>
+
+      <div class="section-title">Identity</div>
+      <div class="summary-row"><span class="k">ID type / number</span><span class="v">${esc(a.idType)} · ${esc(a.idNumber)}</span></div>
+      <div class="thumb-row">${a.idFrontImage?`<img src="${a.idFrontImage}">`:''}${a.selfieImage?`<img src="${a.selfieImage}">`:''}</div>
+
+      <div class="section-title">Vehicle</div>
+      <div class="summary-row"><span class="k">Type</span><span class="v">${esc(a.vehicleType)}</span></div>
+      <div class="summary-row"><span class="k">Make / model / year</span><span class="v">${esc(a.make)} ${esc(a.model)} ${esc(a.year)}</span></div>
+      <div class="summary-row"><span class="k">Plate / colour</span><span class="v">${esc(a.plate)} · ${esc(a.color)}</span></div>
+
+      <div class="section-title">Documents</div>
+      <div class="thumb-row">
+        ${a.docs.license?`<img src="${a.docs.license}" title="Licence">`:''}
+        ${a.docs.logbook?`<img src="${a.docs.logbook}" title="Logbook">`:''}
+        ${a.docs.insurance?`<img src="${a.docs.insurance}" title="Insurance">`:''}
+        ${a.docs.addressProof?`<img src="${a.docs.addressProof}" title="Address proof">`:''}
+      </div>
+
+      <div class="section-title">Decision</div>
+      <div class="field"><textarea id="reviewNote" placeholder="Optional note to the driver">${esc(a.reviewNote||'')}</textarea></div>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <button class="btn btn-ghost" id="rejectBtn" style="border-color:var(--rust);color:var(--rust);">Reject</button>
+        <button class="btn btn-amber" id="approveBtn">Approve</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(back);
+  back.querySelector('#closeModal').addEventListener('click', () => back.remove());
+  back.querySelector('#approveBtn').addEventListener('click', () => decide('approved', back));
+  back.querySelector('#rejectBtn').addEventListener('click', () => decide('rejected', back));
+}
+
+async function decide(status, modalEl){
+  const a = state.adminSelected;
+  a.status = status;
+  a.reviewNote = document.querySelector('#reviewNote').value;
+  await sset('application:' + a.phone, a);
+  modalEl.remove();
+  await loadAdminApps();
+  render();
+}
+
+// ---------- Router ----------
+
+function render(){
+  if (state.loading){ renderShell(`${topbar()}<div class="content"><p class="sub">Loading…</p></div>`); return; }
+  switch(state.screen){
+    case 'signin': return renderSignIn();
+    case 'otp': return renderOtp();
+    case 'onboard': return renderOnboard();
+    case 'complete': return renderComplete();
+    case 'status': return renderStatus();
+    case 'adminGate': return renderAdminGate();
+    case 'admin': return renderAdmin();
+    default: return renderSignIn();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
